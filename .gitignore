@@ -1,10 +1,11 @@
 /.venv/
 __pycache__/
-*.pyc
 logs/
-JSON/bot.json
+*.pyc
 
 .vscode/
 .DS_Store
 
 .*.*.swp
+
+JSON/bot.json

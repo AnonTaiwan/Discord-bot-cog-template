@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import asyncio
 import os
 from time import sleep
@@ -7,10 +7,11 @@ import logging
 from datetime import datetime, timedelta, date, time
 from pathlib import Path
 import json
+import utils
 
 class MyBot(commands.Bot):
     def __init__(self):
-        super().__init__(intents=discord.Intents.all())  # 危險設定，僅供示範與個人測試用
+        super().__init__(intents=discord.Intents.all())
         self.date = datetime.now().strftime("%Y%m%d")
         self.initial_extensions = []
         for p in Path("./cog").iterdir():
@@ -18,7 +19,9 @@ class MyBot(commands.Bot):
                 self.initial_extensions.append(f"cog.{p.stem}")
 
     async def on_ready(self):
+        game = discord.Game("Blue Archive")
         print(f"✅ Logged in as {self.user}")
+        await self.change_presence(status=discord.Status.online, activity=game)
         self.remove_command("help")
         self.loop.create_task(self.auto_shutdown_at_midnight())
 
@@ -58,7 +61,7 @@ def setup_daily_logger():
         log_dir.mkdir(parents=True, exist_ok=True)
     
     # 設定日誌檔案名稱
-    log_file = log_dir / f'fb_bot_{datetime.now():%Y%m%d}.log'
+    log_file = log_dir / f'bot_{datetime.now():%Y%m%d}.log'
     
     # 重新配置日誌
     logging.basicConfig(
@@ -75,10 +78,6 @@ def setup_daily_logger():
     return logging.getLogger()
 
 async def main():
-    with open("JSON/bot.json", "r", encoding="utf-8") as f:
-        config = json.load(f)
-    TOKEN = config.get("TOKEN")
-
     logger = None
     current_date = None
     while True:
@@ -92,8 +91,12 @@ async def main():
             logger.info(f"日誌系統已更新至 {today}")
             
         async with MyBot() as bot:
+            if os.environ.get("CI_RUNNING") == "true":
+                logger.info("CI 環境中，將不會啟動機器人")
+                await asyncio.sleep(30)
+
             bot.load_extensions()
-            await bot.start(TOKEN)
+            await bot.start(utils.BOT_TOKEN)
 
 if __name__ == "__main__":
     asyncio.run(main())
