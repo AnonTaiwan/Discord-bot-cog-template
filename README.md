@@ -5,7 +5,7 @@
 須以此為模板進行開發，並不得更動 `bot.py`  
 僅能提交 `cog/` 資料夾內的檔案供管理員審核  
 管理員審核並同意後始得將該功能整合進 Anon Taiwan 的 Discord 機器人  
-若有需要可以在 `JSON/bot.json` 儲存隱密資料，若有此需求也須一併告知
+若有需要可以在 `JSON/bot.json` 儲存隱密資料，並於提交申請時一併告知
 
 ### Requirements
 
