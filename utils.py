@@ -17,7 +17,7 @@ BOT_CONFIG_FILE = JSON_DIR / 'bot.json'
 try:
     with open(JSON_DIR / 'bot.json', 'r', encoding='utf-8') as f:
         config = json.load(f)
-    BOT_TOKEN = config.get("TOKEN", "")
+    BOT_TOKEN = config.get("DISCORD_BOT_TOKEN", "")
 except Exception as e:
     print(f"Error reading {BOT_CONFIG_FILE}: {e}")
 
